@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+int main() {
+    char ch;
+
+    FILE *src = fopen("a.txt", "r");
+    FILE *dest = fopen("b.txt", "w");
+
+    if (src == NULL || dest == NULL) {
+        printf("Error opening file\n");
+        return 1;
+    }
+
+    while ((ch = fgetc(src)) != EOF) {
+        fputc(ch, dest);
+    }
+
+    printf("File Copied\n");
+
+    fclose(src);
+    fclose(dest);
+    return 0;
+}
