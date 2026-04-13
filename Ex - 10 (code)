@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <string.h>
+#include <unistd.h>
+
+struct msg {
+    long type;
+    char text[100];
+};
+
+int main() {
+    key_t key = ftok("progfile", 65);
+    int msgid = msgget(key, 0666 | IPC_CREAT);
+
+    struct msg message;
+
+    if (fork() > 0) {
+        message.type = 1;
+        strcpy(message.text, "Hello from Producer!");
+        msgsnd(msgid, &message, sizeof(message.text), 0);
+        printf("Producer sent: %s\n", message.text);
+    } else {
+        msgrcv(msgid, &message, sizeof(message.text), 1, 0);
+        printf("Consumer received: %s\n", message.text);
+    }
+
+    msgctl(msgid, IPC_RMID, NULL);
+}
