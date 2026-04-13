@@ -1,0 +1,89 @@
+#include <stdio.h>
+
+int main() {
+    int m, n, i, j, choice;
+
+    printf("Number of memory partition : ");
+    scanf("%d", &m);
+
+    printf("Number of process : ");
+    scanf("%d", &n);
+
+    int block[m], process[n], used[m];
+
+    printf("Enter the memory partitions :\n");
+    for(i = 0; i < m; i++) {
+        scanf("%d", &block[i]);
+        used[i] = 0; // mark all blocks free
+    }
+
+    printf("Enter process size :\n");
+    for(i = 0; i < n; i++) {
+        scanf("%d", &process[i]);
+    }
+
+    printf("\n1. Firstfit\n2. Bestfit\n3. Worstfit\n");
+    printf("Enter your choice : ");
+    scanf("%d", &choice);
+
+    if(choice == 1) {
+        for(i = 0; i < n; i++) {
+            int allocated = 0;
+            for(j = 0; j < m; j++) {
+                if(used[j] == 0 && block[j] >= process[i]) {
+                    printf("%d fits in %d\n", process[i], block[j]);
+                    used[j] = 1;
+                    allocated = 1;
+                    break;
+                }
+            }
+            if(!allocated) {
+                printf("%d must wait for its process\n", process[i]);
+            }
+        }
+    }
+
+    else if(choice == 2) {
+        for(i = 0; i < n; i++) {
+            int best = -1;
+            for(j = 0; j < m; j++) {
+                if(used[j] == 0 && block[j] >= process[i]) {
+                    if(best == -1 || block[j] < block[best]) {
+                        best = j;
+                    }
+                }
+            }
+            if(best != -1) {
+                printf("%d fits in %d\n", process[i], block[best]);
+                used[best] = 1;
+            } else {
+                printf("%d must wait for its process\n", process[i]);
+            }
+        }
+    }
+
+    else if(choice == 3) {
+        for(i = 0; i < n; i++) {
+            int worst = -1;
+            for(j = 0; j < m; j++) {
+                if(used[j] == 0 && block[j] >= process[i]) {
+                    if(worst == -1 || block[j] > block[worst]) {
+                        worst = j;
+                    }
+                }
+            }
+            if(worst != -1) {
+                printf("%d fits in %d\n", process[i], block[worst]);
+                used[worst] = 1;
+            } else {
+                printf("%d must wait for its process\n", process[i]);
+            }
+        }
+    }
+
+    else {
+        printf("Invalid choice\n");
+    }
+
+    return 0;
+}
