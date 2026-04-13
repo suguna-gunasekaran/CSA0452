@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct emp {
+    int id;
+    char name[50];
+    float salary;
+};
+
+int main() {
+    FILE *fp;
+    struct emp e;
+    int choice, id;
+    long pos;
+
+    fp = fopen("employee.dat", "rb+");
+
+    if (fp == NULL) {
+        fp = fopen("employee.dat", "wb+");
+        if (fp == NULL) {
+            printf("File cannot be opened!\n");
+            exit(1);
+        }
+    }
+
+    while (1) {
+        printf("\nEmployee Database Menu:\n");
+        printf("1. Add Employee\n");
+        printf("2. Display Employee Details\n");
+        printf("3. Update Employee Details\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+
+      
+        case 1:
+            printf("Enter Employee ID: ");
+            scanf("%d", &e.id);
+            printf("Enter Employee Name: ");
+            scanf("%s", e.name);
+            printf("Enter Employee Salary: ");
+            scanf("%f", &e.salary);
+
+            fwrite(&e, sizeof(e), 1, fp);
+            printf("Employee details added successfully.\n");
+            break;
+
+     
+        case 2:
+            rewind(fp);
+            printf("\nEmployee Details:\n");
+
+            while (fread(&e, sizeof(e), 1, fp)) {
+                printf("ID: %d Name: %s Salary: %.2f\n", e.id, e.name, e.salary);
+            }
+            break;
+
+  
+        case 3:
+            printf("Enter Employee ID to update: ");
+            scanf("%d", &id);
+
+            rewind(fp);
+            int found = 0;
+
+            while (fread(&e, sizeof(e), 1, fp)) {
+                if (e.id == id) {
+                    pos = ftell(fp) - sizeof(e);
+
+                    printf("Enter new Name: ");
+                    scanf("%s", e.name);
+                    printf("Enter new Salary: ");
+                    scanf("%f", &e.salary);
+
+                    fseek(fp, pos, SEEK_SET);
+                    fwrite(&e, sizeof(e), 1, fp);
+
+                    printf("Employee details updated successfully.\n");
+                    found = 1;
+                    break;
+                }
+            }
+
+            if (!found)
+                printf("Employee not found!\n");
+
+            break;
+
+        case 4:
+            fclose(fp);
+            exit(0);
+
+        default:
+            printf("Invalid choice!\n");
+        }
+    }
+
+    return 0;
+}
