@@ -1,0 +1,68 @@
+#include <stdio.h>
+
+#define MAX 1000
+int m[MAX];
+
+// initialize
+void init() {
+    for(int i=0;i<MAX;i++) m[i] = -1;
+}
+
+// display memory
+void show() {
+    int i,j;
+    printf("\nMemory Status:\n");
+    for(i=0;i<MAX;i++) {
+        if(m[i]==-1) {
+            j=i;
+            while(j<MAX && m[j]==-1) j++;
+            printf("Free memory block %d-%d\n", i, j-1);
+            i=j-1;
+        }
+    }
+}
+
+// BEST FIT allocation
+void alloc(int p,int size) {
+    int best=-1, bsize=MAX;
+
+    for(int i=0;i<MAX;i++) {
+        if(m[i]==-1) {
+            int j=i;
+            while(j<MAX && m[j]==-1) j++;
+            int s=j-i;
+
+            if(s>=size && s<bsize) {
+                bsize=s;
+                best=i;
+            }
+            i=j-1;
+        }
+    }
+
+    if(best!=-1) {
+        for(int i=best;i<best+size;i++) m[i]=p;
+        printf("Allocated memory block %d-%d to Process %d\n",
+               best, best+size-1, p);
+    }
+}
+
+// deallocate
+void freeM(int p) {
+    for(int i=0;i<MAX;i++)
+        if(m[i]==p) m[i]=-1;
+
+    printf("Memory released by Process %d\n", p);
+}
+
+// main
+int main() {
+    init(); show();
+
+    alloc(1,200); show();
+    alloc(2,300); show();
+    freeM(1); show();
+    alloc(3,400); show();
+
+    return 0;
+}
