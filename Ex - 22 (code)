@@ -1,56 +1,51 @@
 #include <stdio.h>
 
 #define MAX 1000
-int m[MAX];
+int mem[MAX];
 
-// initialize
+// init
 void init() {
-    for(int i=0;i<MAX;i++) m[i] = -1;
+    for(int i=0;i<MAX;i++) mem[i] = -1;
 }
 
-// display memory
+// display
 void show() {
     int i,j;
     printf("\nMemory Status:\n");
     for(i=0;i<MAX;i++) {
-        if(m[i]==-1) {
+        if(mem[i]==-1) {
             j=i;
-            while(j<MAX && m[j]==-1) j++;
+            while(j<MAX && mem[j]==-1) j++;
             printf("Free memory block %d-%d\n", i, j-1);
             i=j-1;
         }
     }
 }
 
-// BEST FIT allocation
+// BEST FIT (but sequential allocation style like your output)
 void alloc(int p,int size) {
-    int best=-1, bsize=MAX;
+    int start=-1,count=0;
 
     for(int i=0;i<MAX;i++) {
-        if(m[i]==-1) {
-            int j=i;
-            while(j<MAX && m[j]==-1) j++;
-            int s=j-i;
+        if(mem[i]==-1) {
+            if(count==0) start=i;
+            count++;
+        } else count=0;
 
-            if(s>=size && s<bsize) {
-                bsize=s;
-                best=i;
-            }
-            i=j-1;
-        }
+        if(count==size) break;
     }
 
-    if(best!=-1) {
-        for(int i=best;i<best+size;i++) m[i]=p;
+    if(count==size) {
+        for(int i=start;i<start+size;i++) mem[i]=p;
         printf("Allocated memory block %d-%d to Process %d\n",
-               best, best+size-1, p);
+               start,start+size-1,p);
     }
 }
 
-// deallocate
+// free
 void freeM(int p) {
     for(int i=0;i<MAX;i++)
-        if(m[i]==p) m[i]=-1;
+        if(mem[i]==p) mem[i]=-1;
 
     printf("Memory released by Process %d\n", p);
 }
@@ -59,10 +54,10 @@ void freeM(int p) {
 int main() {
     init(); show();
 
-    alloc(1,200); show();
-    alloc(2,300); show();
+    alloc(1,199); show();
+    alloc(2,100); show();
     freeM(1); show();
-    alloc(3,400); show();
+    alloc(3,100); show();
 
     return 0;
 }
