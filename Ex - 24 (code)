@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+int main() {
+    int fd;
+    char data[] = "Hello, World!";
+    char buffer[50];
+
+    // Create file
+    fd = creat("sample.txt", 0644);
+    printf("File created successfully.\n");
+    close(fd);
+
+    // Open file for writing
+    fd = open("sample.txt", O_WRONLY);
+    printf("File opened for writing.\n");
+
+    // Write to file
+    write(fd, data, sizeof(data));
+    printf("Data written to file.\n");
+    close(fd);
+
+    // Open file for reading
+    fd = open("sample.txt", O_RDONLY);
+    printf("File opened for reading.\n");
+
+    // Read from file
+    read(fd, buffer, sizeof(data));
+    printf("Data read from file: %s\n", buffer);
+    close(fd);
+
+    // Delete file
+    unlink("sample.txt");
+    printf("File deleted.\n");
+
+    return 0;
+}
