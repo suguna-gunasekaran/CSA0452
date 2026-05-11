@@ -1,0 +1,25 @@
+#include<stdio.h>
+
+int main()
+{
+    FILE *fp;
+    char ch;
+
+    fp = fopen("sample.txt", "w+");
+
+    fprintf(fp, "Hello World\n");
+    fprintf(fp, "File Management in C");
+
+    rewind(fp);
+
+    printf("File Contents:\n");
+
+    while((ch = fgetc(fp)) != EOF)
+    {
+        putchar(ch);
+    }
+
+    fclose(fp);
+
+    return 0;
+}
