@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure to represent a block
+struct Block
+{
+    int blockNumber;
+    char data[256];
+};
+
+int main()
+{
+    FILE *file;
+    struct Block block;
+    int blockNumber;
+
+    // Index block to store positions of blocks
+    int indexBlock[100] = {0};
+
+    // Open file in write mode
+    file = fopen("indexed_file.txt", "w");
+
+    if (file == NULL)
+    {
+        printf("Error opening the file.\n");
+        return 1;
+    }
+
+    // Write blocks
+    printf("Enter blocks (Enter 0 as block number to exit):\n");
+
+    while (1)
+    {
+        printf("Block Number: ");
+        scanf("%d", &block.blockNumber);
+
+        if (block.blockNumber == 0)
+        {
+            break;
+        }
+
+        printf("Data: ");
+        scanf(" %[^\n]", block.data);
+
+        // Store current file position
+        indexBlock[block.blockNumber] = ftell(file);
+
+        // Write block to file
+        fwrite(&block, sizeof(struct Block), 1, file);
+    }
+
+    fclose(file);
+
+    // Open file in read mode
+    file = fopen("indexed_file.txt", "r");
+
+    if (file == NULL)
+    {
+        printf("Error opening the file.\n");
+        return 1;
+    }
+
+    // Read blocks using index
+    while (1)
+    {
+        printf("\nEnter the block number to read (0 to exit): ");
+        scanf("%d", &blockNumber);
+
+        if (blockNumber == 0)
+        {
+            break;
+        }
+
+        if (indexBlock[blockNumber] == 0 && blockNumber != 1)
+        {
+            printf("Block not found.\n");
+        }
+        else
+        {
+            // Move to indexed position
+            fseek(file, indexBlock[blockNumber], SEEK_SET);
+
+            // Read block
+            fread(&block, sizeof(struct Block), 1, file);
+
+            printf("Block Number: %d\n", block.blockNumber);
+            printf("Data: %s\n", block.data);
+        }
+    }
+
+    fclose(file);
+
+    return 0;
+}
